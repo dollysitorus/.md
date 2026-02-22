@@ -60,7 +60,7 @@ otomatis cancelled begitu response dikirim.
 | `internal/config` | Config loader + migration runner (embed.FS) |
 | `internal/handler` | HTTP handlers (auth, conversation, whatsapp, ws) |
 | `internal/middleware` | JWT auth + role middleware |
-| `internal/repository` | DB access (agent, contact, conversation, message, whatsapp_account) |
+| `internal/repository` | DB access (agent, contact, conversation, message, whatsapp_account, canned_response) |
 | `internal/service` | Business logic (auth) |
 | `internal/storage` | MinIO client |
 | `internal/websocket` | WebSocket hub + client |
@@ -72,7 +72,7 @@ otomatis cancelled begitu response dikirim.
 - [x] Implementasi whatsmeow connection
 - [x] REST API endpoints
 - [x] WebSocket hub + realtime broadcast
-- [x] Database schema + migrations (001 init, 002 fix status, 003 supervisor role)
+- [x] Database schema + migrations (001 init, 002 fix status, 003 supervisor role, 004 high priority features)
 - [x] Auth (JWT)
 - [x] MinIO integration
 - [x] Dashboard frontend
@@ -86,3 +86,11 @@ otomatis cancelled begitu response dikirim.
 - [x] Media message handling (image/video/audio/document)
 - [x] Supervisor role (migration 003, role hierarchy admin > supervisor > agent)
 - [x] Assign agent UI (supervisor + admin can assign agent to conversation)
+- [x] Chat window scroll fix (flex min-height chain + nav logo contrast)
+- [x] Conversation status lifecycle (open → in_progress → resolved → closed, migration 004)
+- [x] Unread count + badge (per conversation, reset on open)
+- [x] Contact profile (editable custom_name + notes)
+- [x] Search conversations (by contact name/phone, debounce 300ms)
+- [x] Canned responses / quick reply (shared global, CRUD + picker)
+- [x] SVG icon migration (all emoji → inline SVG: search, attach, send, info, close, empty states)
+- [x] Detail panel polish (stacked form layout, styled inputs/selects, action button)
