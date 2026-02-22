@@ -18,6 +18,7 @@ Satu istilah = satu nama. Sinonim dilarang.
 | pgadmin | PostgreSQL GUI (pgAdmin 4) | db-gui, admin-panel |
 | redis | Redis cache/queue server | cache-server |
 | minio | MinIO object storage (S3-compatible) | s3, object-store, storage |
+| mailpit | Local email testing (SMTP + Web UI) | mailtrap, mail-server, smtp |
 
 ## General
 

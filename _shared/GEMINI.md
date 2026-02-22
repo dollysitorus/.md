@@ -89,14 +89,15 @@ Setiap jawaban implementasi wajib memuat:
 ## 2) Context Lock
 1. Task wajib menyebut REPO_TARGET (crm/erp/infra).
 2. Agent hanya boleh mengubah:
-   - workspace/app-<REPO_TARGET>/**
-   - workspace/infra-context/**
+   - `/Volumes/Data/app/<REPO_TARGET>/**`
+   - `/Volumes/Data/app/.md/**`
 3. Cross-project dilarang tanpa izin eksplisit.
 
 ## 3) Single Source of Truth
-1. Glossary domain ada di infra-context (bukan tersebar di project).
-2. Standar global ada di infra-context.
-3. Project hanya boleh punya CONTEXT.md sebagai pointer/override minimal.
+1. Glossary domain ada di `.md/_shared/glossary.md` (bukan tersebar di project).
+2. Standar global ada di `.md/_shared/standards.md`.
+3. GEMINI.md source of truth ada di `.md/_shared/GEMINI.md` — copy ke `~/.gemini/GEMINI.md` di setiap mesin.
+4. Workflow source of truth ada di `.md/_shared/workflows/`.
 
 ## 4) Minimal Change & No Overlap
 - Jangan duplikasi logika
