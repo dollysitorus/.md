@@ -104,7 +104,7 @@ Setiap jawaban implementasi wajib memuat:
 2. Standar global ada di `.md/_shared/standards.md`.
 3. GEMINI.md source of truth ada di `.md/_shared/GEMINI.md` — copy ke `~/.gemini/GEMINI.md` di setiap mesin.
 4. Workflow source of truth ada di `.md/_shared/workflows/`.
-5. Workflow discovery: agent WAJIB membaca workflows langsung dari `.md/_shared/workflows/`. Tidak boleh ada folder agent (`.agents`, `.agent`, dll) di workspace root. Saat inisiasi conversation baru, agent harus memuat rules dari `.md/_shared/GEMINI.md` dan workflow dari `.md/_shared/workflows/`.
+5. Workflow discovery via symlink: `.agents/workflows` → `.md/_shared/workflows/`. Source of truth tetap di `.md/_shared/workflows/`. Symlink dibuat otomatis oleh agent saat init (lihat section 7).
 
 ## 4) Minimal Change & No Overlap
 - Jangan duplikasi logika
@@ -119,3 +119,14 @@ Setiap respons implementasi wajib:
 - Summary perubahan (project + context)
 - Files changed (project + context)
 - Verification steps
+
+## 7) Auto-Init Workspace (Wajib di Conversation Pertama)
+Saat conversation pertama di mesin baru atau workspace baru, agent WAJIB jalankan langkah berikut:
+1. Cek apakah `.md/` repo sudah ada di `/Volumes/Data/app/.md/`. Jika belum, minta user clone.
+2. Copy rules: `cp /Volumes/Data/app/.md/_shared/GEMINI.md ~/.gemini/GEMINI.md`
+3. Buat symlink workflows (jika belum ada):
+   ```bash
+   mkdir -p /Volumes/Data/app/.agents
+   ln -sf ../.md/_shared/workflows /Volumes/Data/app/.agents/workflows
+   ```
+4. Konfirmasi ke user bahwa init selesai.
