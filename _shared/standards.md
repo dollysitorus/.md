@@ -81,7 +81,7 @@ networks:
 | File | Keterangan |
 |------|-----------|
 | `docker-compose.yml` | Dev container + shared dep cache |
-| `.gitignore` | Wajib include `.env` dan `.agents/` |
+| `.gitignore` | Wajib include `.env` |
 | `.env.example` | Template credentials |
 | `.env` | Actual credentials (gitignored) |
 | `README.md` | Quick start + overview |

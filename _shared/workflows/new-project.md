@@ -71,7 +71,7 @@ git init
 
 ### 5. Buat file dasar
 - `docker-compose.yml` — dev container + shared dep cache (lihat di bawah)
-- `.gitignore` — sesuai tech stack, **wajib include `.env` dan `.agents/`**
+- `.gitignore` — sesuai tech stack, **wajib include `.env`**
 - `.env.example` — template credentials
 - `.env` — actual local credentials (gitignored)
 - `README.md` — project overview
@@ -152,7 +152,7 @@ git push origin main
 
 ## Catatan Penting
 
-- `.agents/` folder **selalu gitignored** — agent tooling lokal
+- Tidak boleh ada folder agent (`.agents/`, `.agent/`, dll) di project
 - Push WAJIB 2 repo: project + `.md` (Dual Repo Contract)
 - Jika salah satu gagal push → stop, jelaskan error
 - Baca `_shared/glossary.md` sebelum naming apapun
