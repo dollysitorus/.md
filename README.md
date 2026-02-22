@@ -1,35 +1,27 @@
 # .md — Knowledge Base
 
-Repo ini adalah knowledge base bersama untuk menyimpan konteks semua project **dollysitorus**.
+Knowledge base bersama untuk semua project **dollysitorus**.
 
 ## Struktur
 
 ```
 .md/
-├── <project>/              # 1 folder per project
-│   ├── context.md          # stack, arsitektur, konvensi, status
-│   └── decisions/          # ADR-style keputusan teknis
-│       └── 001-xxx.md
+├── _shared/                  # global, cross-project
+│   ├── glossary.md           # domain terms (1 istilah = 1 nama)
+│   └── standards.md          # coding conventions, patterns
+├── <project>/                # 1 folder per project
+│   ├── context.md            # stack, arsitektur, konvensi, status
+│   ├── decisions/            # ADR keputusan teknis
+│   ├── schema.md             # DB tables, models (opsional)
+│   └── api.md                # endpoint contracts (opsional)
 └── README.md
 ```
 
 ## Konvensi
 
-- **1 folder = 1 project** (nama folder = nama project/repo)
-- `context.md` — wajib ada, berisi ringkasan project
-- `decisions/` — opsional, berisi ADR jika ada keputusan teknis
-
-## Cara Pakai
-
-### Context (`<project>/context.md`)
-- Tech stack & dependencies
-- Arsitektur & folder structure
-- Konvensi kode & naming
-- Status & progress
-
-### Decisions (`<project>/decisions/xxx.md`)
-Format ADR:
-- **Status** — Accepted / Superseded / Deprecated
-- **Context** — Masalah apa yang dihadapi
-- **Decision** — Apa yang dipilih (tabel perbandingan)
-- **Consequences** — Dampak dari keputusan
+- **1 folder = 1 project** (nama folder = nama repo)
+- `_shared/` — aturan global yang berlaku lintas project
+- `context.md` — wajib, ringkasan project
+- `decisions/` — opsional, ADR jika ada keputusan teknis
+- `schema.md` — opsional, struktur database/models
+- `api.md` — opsional, kontrak endpoint
