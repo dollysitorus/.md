@@ -87,9 +87,10 @@ Setiap jawaban implementasi wajib memuat:
    - Repo Project: implementasi kode
    - Repo Context: knowledge (glossary/decisions/standards/workflow map)
 2. Setiap perubahan penting (naming baru, modul baru, boundary baru, keputusan arsitektur) WAJIB dicatat di repo Context.
-3. Saat user meminta "push git", WAJIB push kedua repo:
-   - push repo project
-   - push repo context
+3. Saat user meminta "push git":
+   - Agent WAJIB list repo mana saja yang akan di-push (hanya repo yang ada perubahan di task ini).
+   - `.md` repo **SELALU ikut di-push** di setiap push (karena context selalu berubah bersama project).
+   - Repo project yang **tidak diubah** di task ini **TIDAK boleh di-push**.
 4. Jika salah satu repo gagal push, proses dianggap gagal (stop, jelaskan error, jangan klaim sukses).
 
 ## 2) Context Lock
