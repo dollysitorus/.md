@@ -70,26 +70,63 @@ git init
 ```
 
 ### 5. Buat file dasar
+- `docker-compose.yml` — dev container + shared dep cache (lihat di bawah)
 - `.gitignore` — sesuai tech stack, **wajib include `.env` dan `.agents/`**
 - `.env.example` — template credentials
 - `.env` — actual local credentials (gitignored)
 - `README.md` — project overview
 
-### 6. Scaffold struktur sesuai tech stack
+### 6. Buat `docker-compose.yml` dengan dev container
+
+Wajib punya service `dev` yang mount shared dep cache:
+
+```yaml
+# Contoh Node.js
+services:
+  dev:
+    image: node:20-alpine
+    container_name: <nama>-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - dep_npm:/root/.npm
+    networks:
+      - infra-net
+    # command: npm run dev
+
+volumes:
+  dep_npm:
+    external: true
+
+networks:
+  infra-net:
+    external: true
+```
+
+Pilih image + volume sesuai tech stack:
+
+| Tech | Image | Dep volume | Mount target |
+|------|-------|-----------|--------------|
+| Node.js | `node:20-alpine` | `dep_npm` | `/root/.npm` |
+| Go | `golang:1.22-alpine` | `dep_go` | `/go/pkg/mod` |
+| Python | `python:3.12-alpine` | `dep_pip` | `/root/.cache/pip` |
+| PHP | `php:8.3-alpine` | `dep_composer` | `/root/.composer/cache` |
+
+### 7. Scaffold struktur sesuai tech stack
 Buat folder structure awal sesuai stack yang dipilih.
 
-### 7. Initial commit
+### 8. Initial commit
 ```bash
 git add -A
 git commit -m "chore: initial <nama> setup"
 ```
 
-### 8. Buat GitHub repo + push
+### 9. Buat GitHub repo + push
 ```bash
 gh repo create <nama> --private --source . --remote origin --push
 ```
 
-### 9. Update infra (opsional)
+### 10. Update infra (opsional)
 Jika project butuh:
 - **Database baru**: tambah init script di infra
 - **Reverse proxy**: tambah route di `Caddyfile`

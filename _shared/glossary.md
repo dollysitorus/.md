@@ -9,8 +9,10 @@ Satu istilah = satu nama. Sinonim dilarang.
 | infra | Shared infrastructure (Docker services) | infrastructure, server |
 | service | Satu container dalam docker-compose | container, instance |
 | infra-net | Docker network bersama | network, bridge |
+| dev container | Container untuk development (bukan lokal) | local env, dev machine |
+| dep cache | Shared volume untuk dependency packages | node_modules, vendor |
 
-## Database
+## Services
 
 | Istilah | Definisi | ❌ Jangan pakai |
 |---------|----------|-----------------|
@@ -19,6 +21,7 @@ Satu istilah = satu nama. Sinonim dilarang.
 | redis | Redis cache/queue server | cache-server |
 | minio | MinIO object storage (S3-compatible) | s3, object-store, storage |
 | mailpit | Local email testing (SMTP + Web UI) | mailtrap, mail-server, smtp |
+| caddy | Reverse proxy (Caddy 2) | nginx, proxy |
 
 ## General
 

@@ -28,6 +28,12 @@ Larangan:
 3) Default > konfigurasi berlebihan.  
 4) Hindari public API baru kecuali dibutuhkan.
 ---
+## 4b. Docker-Only Development (Non-Negotiable)
+1) Dilarang install runtime (Node, Go, Python, PHP, dll) di mesin lokal.  
+2) Semua development wajib pakai dev container di Docker.  
+3) Dependencies di-cache via shared volumes (`dep_npm`, `dep_go`, `dep_pip`, `dep_composer`).  
+4) Setiap project wajib punya `docker-compose.yml` dengan service `dev`.
+---
 ## 5. Anti-Tumpang Tindih (No Overlap)
 1) Satu konsep hanya punya satu implementasi.  
 2) Tidak boleh ada dua fungsi dengan tanggung jawab identik.  
