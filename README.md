@@ -5,37 +5,31 @@ Repo ini adalah knowledge base bersama untuk menyimpan konteks semua project **d
 ## Struktur
 
 ```
-├── projects/      # Konteks per project (stack, arsitektur, konvensi, status)
-├── decisions/     # Catatan keputusan teknis (ADR-style)
-├── snippets/      # Code snippets & templates reusable
-└── references/    # Link, cheatsheet, catatan referensi
+.md/
+├── <project>/              # 1 folder per project
+│   ├── context.md          # stack, arsitektur, konvensi, status
+│   └── decisions/          # ADR-style keputusan teknis
+│       └── 001-xxx.md
+└── README.md
 ```
+
+## Konvensi
+
+- **1 folder = 1 project** (nama folder = nama project/repo)
+- `context.md` — wajib ada, berisi ringkasan project
+- `decisions/` — opsional, berisi ADR jika ada keputusan teknis
 
 ## Cara Pakai
 
-### Projects
-Buat satu file `.md` per project, isi dengan:
+### Context (`<project>/context.md`)
 - Tech stack & dependencies
 - Arsitektur & folder structure
 - Konvensi kode & naming
 - Status & progress
 
-**Contoh**: `projects/my-app.md`
-
-### Decisions
-Catat keputusan teknis penting dengan format:
-- **Konteks** — Masalah apa yang dihadapi
-- **Keputusan** — Apa yang dipilih
-- **Alasan** — Kenapa pilih itu
-
-**Contoh**: `decisions/001-pilih-postgresql.md`
-
-### Snippets
-Simpan potongan kode yang sering dipakai ulang.
-
-**Contoh**: `snippets/docker-compose-template.md`
-
-### References
-Simpan link, cheatsheet, atau catatan referensi.
-
-**Contoh**: `references/git-cheatsheet.md`
+### Decisions (`<project>/decisions/xxx.md`)
+Format ADR:
+- **Status** — Accepted / Superseded / Deprecated
+- **Context** — Masalah apa yang dihadapi
+- **Decision** — Apa yang dipilih (tabel perbandingan)
+- **Consequences** — Dampak dari keputusan
