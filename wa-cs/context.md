@@ -105,6 +105,7 @@ otomatis cancelled begitu response dikirim.
 - [x] LID-to-phone resolution (resolve LID contacts to real phone via push_name match)
 - [x] Group detail panel (no Contact section, no Status/Assigned Agent — only Group Agents + Group Members)
 - [x] Delivery & read status tracking (sent ✓, delivered ✓✓, read ✓✓ blue — events.Receipt → DB → WebSocket → UI)
+- [x] Contact CRUD (add/edit/delete, company field, search by name/phone/company, migration 009)
 
 ## LID JID Handling
 
