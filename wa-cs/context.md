@@ -31,7 +31,13 @@ Browser (Dashboard) ←→ REST API + WebSocket (:8080)
 ```
 Incoming:  WA → whatsmeow event → handleEvent → callback
            → upsert Contact → FindOrCreate Conversation
+           → Save media metadata (lazy) or upload to MinIO (image only)
            → Create Message → UpdateLastMessage → Hub.Broadcast("new_message")
+
+Media Download (on-demand):
+           Dashboard → POST /conversations/{id}/messages/{msgId}/download
+           → Check WA metadata → Manager.DownloadMedia → Upload MinIO
+           → UpdateMediaURL → return URL
 
 Outgoing:  Dashboard → POST /conversations/{id}/messages
            → Save Message → Manager.SendMessage (async, context.Background)
@@ -59,8 +65,8 @@ otomatis cancelled begitu response dikirim.
 |---------|---------------|
 | `internal/config` | Config loader + migration runner (embed.FS) |
 | `internal/handler` | HTTP handlers (auth, conversation, whatsapp, ws) |
-| `internal/middleware` | JWT auth + role middleware |
-| `internal/repository` | DB access (agent, contact, conversation, message, whatsapp_account, canned_response, group_participant) |
+| `internal/middleware` | JWT auth + role + security (Helmet, CORS, SanitizeInput) |
+| `internal/repository` | DB access (agent, contact, contact_group, conversation, message, whatsapp_account, canned_response, group_participant) |
 | `internal/service` | Business logic (auth) |
 | `internal/storage` | MinIO client |
 | `internal/websocket` | WebSocket hub + client |
@@ -107,7 +113,17 @@ otomatis cancelled begitu response dikirim.
 - [x] Delivery & read status tracking (sent ✓, delivered ✓✓, read ✓✓ blue — events.Receipt → DB → WebSocket → UI)
 - [x] Contact CRUD (add/edit/delete, company field, search by name/phone/company, migration 009)
 - [x] RBAC (contacts=supervisor+, accounts+agents=admin, nav filtering by role)
-
+- [x] Phase 1: WA Account → Agent assignment 
+- [x] Phase 2: Supervisor conversation filtering by assigned WA accounts
+- [x] Phase 3: Start Chat button on Contacts Page (Start private conversation via WA Account selection)
+- [x] Security middleware (SecurityHeaders/Helmet, CORS, SanitizeInput — JSON-safe XSS sanitization)
+- [x] Contact grouping (contact_group + contact_group_member tables, filter by company/group)
+- [x] Soft delete contacts (hidden flag, contacts don't reappear after message sync)
+- [x] Contact dedup (normalize device-specific JIDs, unique constraint on phone_number)
+- [x] LID contact filtering (WhatsApp Linked ID contacts excluded from contact list)
+- [x] Sidebar icon redesign (distinct SVGs: inbox, chat bubble, address book, phone+signal, headset, lightning)
+- [x] Auth state sync fix (synchronous localStorage read prevents redirect flash on refresh)
+- [ ] AI auto-reply + smart routing (planned)
 ## LID JID Handling
 
 WhatsApp now uses LID (Linked Identity) JIDs in group messages instead of phone-based JIDs.
