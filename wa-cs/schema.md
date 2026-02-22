@@ -24,13 +24,14 @@ Nomor WhatsApp yang terdaftar.
 | Column | Type | Notes |
 |--------|------|-------|
 | id | UUID | PK |
-| phone_number | VARCHAR(20) | nomor WA |
-| display_name | VARCHAR(100) | nama tampilan |
-| jid | VARCHAR(100) | WhatsApp JID (dari whatsmeow) |
-| session_data | BYTEA | encrypted session store |
+| phone_number | VARCHAR(20) | nomor WA (diisi setelah login) |
+| display_name | VARCHAR(100) | nama tampilan (input user saat add account) |
+| jid | VARCHAR(100) | WhatsApp JID dari whatsmeow (diisi setelah login) |
 | status | VARCHAR(20) | connected / disconnected / qr_pending |
 | created_at | TIMESTAMPTZ | |
 | updated_at | TIMESTAMPTZ | |
+
+> **Note:** Session/encryption keys disimpan di tabel `whatsmeow_*` (16 tabel, managed otomatis oleh whatsmeow sqlstore).
 
 ### contact
 Kontak customer yang chat.
@@ -74,7 +75,7 @@ Pesan individual dalam conversation.
 | content | TEXT | isi pesan (text) |
 | media_url | TEXT | URL media di MinIO (nullable) |
 | media_mime_type | VARCHAR(50) | MIME type (nullable) |
-| status | VARCHAR(20) | sent / delivered / read / failed |
+| status | VARCHAR(20) | sent / delivered / read / failed / received |
 | created_at | TIMESTAMPTZ | |
 
 ## Indexes
@@ -85,3 +86,10 @@ Pesan individual dalam conversation.
 - `message(conversation_id, created_at)` — untuk chat history
 - `message(wa_message_id)` — untuk dedup
 - `contact(jid)` — UNIQUE
+
+## Migrations
+
+| # | File | Isi |
+|---|------|-----|
+| 001 | `001_init.up.sql` | Semua tabel + indexes + seed admin |
+| 002 | `002_fix_message_status.up.sql` | Tambah 'received' ke message status constraint |
