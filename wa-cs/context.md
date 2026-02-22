@@ -42,7 +42,7 @@ Browser (Dashboard) ←→ REST API (8080) + WebSocket (8081)
 - [x] Implementasi whatsmeow connection
 - [ ] REST API endpoints
 - [ ] WebSocket hub
-- [ ] Database schema + migration
+- [x] Database schema + migration
 - [ ] Auth (JWT)
 - [ ] MinIO integration
 - [ ] Dashboard frontend
