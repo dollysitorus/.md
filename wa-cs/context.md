@@ -40,7 +40,7 @@ Browser (Dashboard) ←→ REST API (8080) + WebSocket (8081)
 
 - [x] Project scaffold
 - [x] Implementasi whatsmeow connection
-- [ ] REST API endpoints
+- [x] REST API endpoints
 - [ ] WebSocket hub
 - [x] Database schema + migration
 - [x] Auth (JWT)
