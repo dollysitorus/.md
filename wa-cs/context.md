@@ -104,7 +104,7 @@ otomatis cancelled begitu response dikirim.
 - [x] Contact sync on connect (272+ contacts from WA store, phone-based JIDs only)
 - [x] LID-to-phone resolution (resolve LID contacts to real phone via push_name match)
 - [x] Group detail panel (no Contact section, no Status/Assigned Agent — only Group Agents + Group Members)
-- [ ] Delivery & read status tracking (sent ✓, delivered ✓✓, read ✓✓ blue)
+- [x] Delivery & read status tracking (sent ✓, delivered ✓✓, read ✓✓ blue — events.Receipt → DB → WebSocket → UI)
 
 ## LID JID Handling
 
