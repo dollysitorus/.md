@@ -30,3 +30,15 @@ Satu istilah = satu nama. Sinonim dilarang.
 | project | Satu unit kerja dengan repo sendiri | app, application, module |
 | context | Knowledge/documentation tentang project | docs, documentation |
 | ADR | Architecture Decision Record | decision log, tech decision |
+
+## WA-CS (WhatsApp Customer Service)
+
+| Istilah | Definisi | ❌ Jangan pakai |
+|---------|----------|-----------------|
+| agent | User/operator yang membalas chat customer | operator, admin, cs, staff |
+| conversation | Thread percakapan antara contact + whatsapp account | chat, thread, room |
+| message | Pesan individual dalam conversation | chat message, msg |
+| contact | Customer yang chat via WhatsApp | customer, user, client |
+| whatsapp account | Nomor WhatsApp terdaftar di sistem | wa number, phone, device |
+| whatsmeow | Library Go untuk WhatsApp Web protocol | wa library, wa sdk |
+
