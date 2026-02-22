@@ -82,5 +82,5 @@ otomatis cancelled begitu response dikirim.
 - [x] WA account persistence (whatsapp_account table)
 - [x] Auto-reconnect on restart (JIDLookup)
 - [x] Group message / broadcast filtering
-- [ ] WA account delete + disconnect/reconnect
-- [ ] Media message handling (image/video/audio/document)
+- [x] WA account delete + disconnect/reconnect
+- [x] Media message handling (image/video/audio/document)
