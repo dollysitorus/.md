@@ -32,7 +32,10 @@ Larangan:
 1) Dilarang install runtime (Node, Go, Python, PHP, dll) di mesin lokal.  
 2) Semua development wajib pakai dev container di Docker.  
 3) Dependencies di-cache via shared volumes (`dep_npm`, `dep_go`, `dep_pip`, `dep_composer`).  
-4) Setiap project wajib punya `docker-compose.yml` dengan service `dev`.
+4) Setiap project wajib punya `docker-compose.yml` dengan service `dev`.  
+5) `node_modules` **DILARANG ada di host filesystem**. Wajib pakai named volume yang di-mount ke `/app/web/node_modules` (atau path sesuai project) supaya shadow host directory.  
+6) Naming volume node_modules: `dep_node_<project>` (contoh: `dep_node_wa_cs`, `dep_node_crm`). Satu project = satu volume (tidak bisa shared karena dependency tree per-project berbeda).  
+7) Setiap volume `dep_node_<project>` WAJIB didaftarkan di `infra/docker-compose.yml` sebagai named volume, dan di project sebagai `external: true`.
 ---
 ## 5. Anti-Tumpang Tindih (No Overlap)
 1) Satu konsep hanya punya satu implementasi.  

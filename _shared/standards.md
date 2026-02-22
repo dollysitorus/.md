@@ -24,21 +24,36 @@ Dibuat di infra, mount sebagai external di setiap project:
 | `dep_pip` | `/root/.cache/pip` | Python |
 | `dep_composer` | `/root/.composer/cache` | PHP |
 
+### Per-Project node_modules Volume (Non-Negotiable)
+
+`node_modules` **DILARANG ada di host filesystem**. Gunakan named volume per-project:
+
+| Volume | Mount target | Scope |
+|--------|-------------|-------|
+| `dep_node_<project>` | `/app/web/node_modules` (atau sesuai project) | Per-project (tidak bisa shared) |
+
+**Kenapa per-project?** `node_modules` berisi resolved dependency tree spesifik per `package.json`. Beda project = beda tree. Kalau di-share akan bentrok. Berbeda dengan `dep_npm` yang hanya cache tarball download (aman shared).
+
+**Naming:** `dep_node_wa_cs`, `dep_node_crm`, dst. Wajib didaftarkan di `infra/docker-compose.yml`.
+
 ### Contoh docker-compose project (Node.js)
 
 ```yaml
 services:
-  dev:
-    image: node:20-alpine
-    working_dir: /app
+  node:
+    image: node:22-alpine
+    working_dir: /app/web
     volumes:
       - .:/app
       - dep_npm:/root/.npm
-    networks:
-      - infra-net
+      - dep_node_myproject:/app/web/node_modules
+    profiles:
+      - build
 
 volumes:
   dep_npm:
+    external: true
+  dep_node_myproject:
     external: true
 
 networks:
