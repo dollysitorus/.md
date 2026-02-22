@@ -94,3 +94,5 @@ otomatis cancelled begitu response dikirim.
 - [x] Canned responses / quick reply (shared global, CRUD + picker)
 - [x] SVG icon migration (all emoji → inline SVG: search, attach, send, info, close, empty states)
 - [x] Detail panel polish (stacked form layout, styled inputs/selects, action button)
+- [x] Contacts page (list all contacts, card grid, GET /api/contacts)
+- [x] Quick replies management page (CRUD UI, add/edit modal, delete confirm)
