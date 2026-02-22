@@ -106,6 +106,7 @@ otomatis cancelled begitu response dikirim.
 - [x] Group detail panel (no Contact section, no Status/Assigned Agent — only Group Agents + Group Members)
 - [x] Delivery & read status tracking (sent ✓, delivered ✓✓, read ✓✓ blue — events.Receipt → DB → WebSocket → UI)
 - [x] Contact CRUD (add/edit/delete, company field, search by name/phone/company, migration 009)
+- [x] RBAC (contacts=supervisor+, accounts+agents=admin, nav filtering by role)
 
 ## LID JID Handling
 
