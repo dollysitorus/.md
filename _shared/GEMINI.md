@@ -79,6 +79,14 @@ Setiap jawaban implementasi wajib memuat:
 - File changed/added
 - Verification steps
 - Catatan tradeoff (jika ada)
+---
+## 12. Context-First Law (Non-Negotiable)
+1) Saat diminta cek status/progress project → **WAJIB baca `.md/<REPO>/context.md` DULU** sebelum scan codebase.
+2) Setelah baca context.md → bandingkan dengan `git log` repo project untuk cari **gap** (fitur yang sudah di-commit tapi belum tercatat di `.md`).
+3) **DILARANG** membuat laporan status dari scan codebase langsung — `.md/` adalah source of truth.
+4) Jika ada gap antara `.md/` dan git log → laporkan ke user dan tawarkan untuk sync `.md/`.
+5) Berlaku untuk SEMUA operasi: cek status, onboarding, review arsitektur, planning fitur baru.
+6) Urutan wajib: `.md/context.md` → `git log` → identifikasi gap → lapor/sync.
 
 # 🔒 Rule Global — Dual Repo Strict (Project + Context)
 

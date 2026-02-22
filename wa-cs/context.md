@@ -72,7 +72,7 @@ otomatis cancelled begitu response dikirim.
 - [x] Implementasi whatsmeow connection
 - [x] REST API endpoints
 - [x] WebSocket hub + realtime broadcast
-- [x] Database schema + migrations (001 init, 002 fix status)
+- [x] Database schema + migrations (001 init, 002 fix status, 003 supervisor role)
 - [x] Auth (JWT)
 - [x] MinIO integration
 - [x] Dashboard frontend
@@ -84,3 +84,5 @@ otomatis cancelled begitu response dikirim.
 - [x] Group message / broadcast filtering
 - [x] WA account delete + disconnect/reconnect
 - [x] Media message handling (image/video/audio/document)
+- [x] Supervisor role (migration 003, role hierarchy admin > supervisor > agent)
+- [x] Assign agent UI (supervisor + admin can assign agent to conversation)

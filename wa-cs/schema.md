@@ -13,7 +13,7 @@ User/operator yang membalas chat.
 | email | VARCHAR(255) | UNIQUE, untuk login |
 | password_hash | VARCHAR(255) | bcrypt |
 | name | VARCHAR(100) | display name |
-| role | VARCHAR(20) | admin / agent |
+| role | VARCHAR(20) | admin / supervisor / agent |
 | is_active | BOOLEAN | default true |
 | created_at | TIMESTAMPTZ | |
 | updated_at | TIMESTAMPTZ | |
@@ -93,3 +93,4 @@ Pesan individual dalam conversation.
 |---|------|-----|
 | 001 | `001_init.up.sql` | Semua tabel + indexes + seed admin |
 | 002 | `002_fix_message_status.up.sql` | Tambah 'received' ke message status constraint |
+| 003 | `003_add_supervisor_role.up.sql` | Tambah 'supervisor' ke agent role constraint |
