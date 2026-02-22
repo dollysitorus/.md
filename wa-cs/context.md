@@ -43,6 +43,6 @@ Browser (Dashboard) ←→ REST API (8080) + WebSocket (8081)
 - [ ] REST API endpoints
 - [ ] WebSocket hub
 - [x] Database schema + migration
-- [ ] Auth (JWT)
+- [x] Auth (JWT)
 - [ ] MinIO integration
 - [ ] Dashboard frontend
