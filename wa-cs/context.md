@@ -44,5 +44,5 @@ Browser (Dashboard) ←→ REST API (8080) + WebSocket (8081)
 - [x] WebSocket hub
 - [x] Database schema + migration
 - [x] Auth (JWT)
-- [ ] MinIO integration
+- [x] MinIO integration
 - [ ] Dashboard frontend
