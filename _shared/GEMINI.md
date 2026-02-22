@@ -104,6 +104,7 @@ Setiap jawaban implementasi wajib memuat:
 2. Standar global ada di `.md/_shared/standards.md`.
 3. GEMINI.md source of truth ada di `.md/_shared/GEMINI.md` — copy ke `~/.gemini/GEMINI.md` di setiap mesin.
 4. Workflow source of truth ada di `.md/_shared/workflows/`.
+5. Workflow discovery: di workspace root (`/Volumes/Data/app/`) WAJIB ada symlink `.agents/workflows` → `.md/_shared/workflows/` agar Gemini mendeteksi workflow. Source of truth tetap di `.md/_shared/workflows/`.
 
 ## 4) Minimal Change & No Overlap
 - Jangan duplikasi logika
