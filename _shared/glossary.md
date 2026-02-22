@@ -42,3 +42,13 @@ Satu istilah = satu nama. Sinonim dilarang.
 | whatsapp account | Nomor WhatsApp terdaftar di sistem | wa number, phone, device |
 | whatsmeow | Library Go untuk WhatsApp Web protocol | wa library, wa sdk |
 
+## Field Sales
+
+| Istilah | Definisi | ❌ Jangan pakai |
+|---------|----------|-----------------|
+| salesperson | User sales yang bertugas di lapangan | sales rep, field agent, sales agent |
+| customer | Entitas bisnis/individu yang dilayani | client, account, pelanggan |
+| visit | Kunjungan salesperson ke lokasi customer | appointment, meeting, call |
+| task | Tugas yang diberikan ke salesperson | assignment, todo, job |
+| check-in | GPS timestamp saat tiba di lokasi customer | clock-in, arrive |
+| check-out | GPS timestamp saat selesai visit | clock-out, leave |
