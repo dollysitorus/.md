@@ -47,9 +47,10 @@ MQL5 Expert Advisor dengan model AI ONNX untuk automated trading di MetaTrader 5
 - [x] Skeleton EA (`onnx-ea.mq5`) + helper (`onnx-helper.mqh`)
 - [x] Python model/train/export/validate scripts
 - [x] GitHub repo created
+- [x] Data cleaning pipeline (clean-ticks, build-bars, engineer-features)
 
 ### Todo
-- [ ] Implement data loading & preprocessing
+- [ ] Run full cleaning on 215M ticks (server)
 - [ ] Training model di server
 - [ ] Export model ke ONNX
 - [ ] Complete EA inference logic
