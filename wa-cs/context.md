@@ -66,7 +66,7 @@ otomatis cancelled begitu response dikirim.
 | `internal/config` | Config loader + migration runner (embed.FS) |
 | `internal/handler` | HTTP handlers (auth, conversation, whatsapp, ws) |
 | `internal/middleware` | JWT auth + role + security (Helmet, CORS, SanitizeInput) |
-| `internal/repository` | DB access (agent, contact, contact_group, conversation, message, whatsapp_account, canned_response, group_participant) |
+| `internal/repository` | DB access (agent, contact, contact_group, conversation, message, whatsapp_account, ai_knowledge, canned_response, group_participant) |
 | `internal/service` | Business logic (auth) |
 | `internal/storage` | MinIO client |
 | `internal/websocket` | WebSocket hub + client |
@@ -78,7 +78,7 @@ otomatis cancelled begitu response dikirim.
 - [x] Implementasi whatsmeow connection
 - [x] REST API endpoints
 - [x] WebSocket hub + realtime broadcast
-- [x] Database schema + migrations (001 init, 002 fix status, 003 supervisor role, 004 high priority features, 008 group_participant)
+- [x] Database schema + migrations (001 init → 016 per-account AI)
 - [x] Auth (JWT)
 - [x] MinIO integration
 - [x] Dashboard frontend
@@ -123,7 +123,7 @@ otomatis cancelled begitu response dikirim.
 - [x] LID contact filtering (WhatsApp Linked ID contacts excluded from contact list)
 - [x] Sidebar icon redesign (distinct SVGs: inbox, chat bubble, address book, phone+signal, headset, lightning)
 - [x] Auth state sync fix (synchronous localStorage read prevents redirect flash on refresh)
-- [ ] AI auto-reply + smart routing (planned)
+- [x] AI auto-reply per WA account (API key, model, system prompt, knowledge base scoped per-account)
 ## LID JID Handling
 
 WhatsApp now uses LID (Linked Identity) JIDs in group messages instead of phone-based JIDs.

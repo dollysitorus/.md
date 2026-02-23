@@ -52,3 +52,13 @@ Satu istilah = satu nama. Sinonim dilarang.
 | task | Tugas yang diberikan ke salesperson | assignment, todo, job |
 | check-in | GPS timestamp saat tiba di lokasi customer | clock-in, arrive |
 | check-out | GPS timestamp saat selesai visit | clock-out, leave |
+
+## MQL-AI (Trading AI)
+
+| Istilah | Definisi | ❌ Jangan pakai |
+|---------|----------|-----------------|
+| ea | Expert Advisor — automated trading program di MT5 | bot, robot, algo |
+| onnx | Open Neural Network Exchange format | model file, ai file |
+| indicator | Technical indicator / custom indicator MT5 | signal, metric |
+| backtest | Pengujian strategi pada data historis | simulation, test run |
+
