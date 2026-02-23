@@ -48,6 +48,7 @@ MQL5 Expert Advisor dengan model AI ONNX untuk automated trading di MetaTrader 5
 - [x] Python model/train/export/validate scripts
 - [x] GitHub repo created
 - [x] Data cleaning pipeline (clean-ticks, build-bars, engineer-features)
+- [x] Execution simulation pipeline (simulate-execution)
 
 ### Todo
 - [ ] Run full cleaning on 215M ticks (server)
