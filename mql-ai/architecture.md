@@ -3,15 +3,59 @@
 ## System Overview
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Raw Ticks   │────►│  Data        │────►│  Training    │
-│  (CSV 16GB)  │     │  Pipeline    │     │  Pipeline    │
-└─────────────┘     └──────────────┘     └──────┬───────┘
+┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
+│  Raw Ticks   │────►│  Data        │────►│  Training        │
+│  (CSV 16GB)  │     │  Pipeline    │     │  Pipeline        │
+└─────────────┘     └──────────────┘     └──────┬───────────┘
                                                  │
-                     ┌──────────────┐     ┌──────▼───────┐
-                     │  MT5 EA      │◄────│  ONNX Models │
-                     │  (live)      │     │  (.onnx)     │
-                     └──────────────┘     └──────────────┘
+                     ┌──────────────┐     ┌──────▼───────────┐
+                     │  MT5 EA      │◄────│  3 ONNX Models   │
+                     │  (live)      │     │  regime + signal  │
+                     └──────────────┘     └──────────────────┘
+```
+
+## Project Structure
+
+```
+mql-ai/
+├── mql5/
+│   ├── experts/
+│   │   └── signal-trader-ea.mq5    ← production EA
+│   ├── include/
+│   │   └── onnx-helper.mqh
+│   └── models/
+│       └── signal.onnx             ← deployed ONNX
+│
+├── python/
+│   ├── configs/
+│   │   └── default.yaml
+│   ├── data/
+│   │   └── training/
+│   │       └── labeled.parquet
+│   ├── models/
+│   │   ├── signal-2class.pt        ← production model
+│   │   └── onnx/
+│   │       └── signal.onnx
+│   ├── src/
+│   │   ├── pipeline/               ← data processing
+│   │   │   ├── clean-ticks.py
+│   │   │   ├── build-bars.py
+│   │   │   ├── engineer-features.py
+│   │   │   └── generate-labels.py
+│   │   ├── training/               ← model training
+│   │   │   ├── model.py
+│   │   │   ├── train-signal-2class.py
+│   │   │   ├── export-onnx.py
+│   │   │   └── validate-onnx.py
+│   │   └── testing/                ← stress tests & analysis
+│   │       ├── test-stress.py
+│   │       ├── test-confidence.py
+│   │       ├── test-filtered-vs-all.py
+│   │       ├── simulate-execution.py
+│   │       └── tune-params.py
+│   └── requirements.txt
+│
+└── ticks_XAUUSD.csv                ← 16GB raw data (gitignored)
 ```
 
 ## Data Pipeline
@@ -19,67 +63,99 @@
 ```
 ticks_XAUUSD.csv (215M ticks, 16GB)
     │
-    ▼ clean-ticks.py
-cleaned.parquet (remove bad ticks, normalize timestamps)
+    ▼ pipeline/clean-ticks.py
+cleaned.parquet
     │
-    ▼ build-bars.py
-bars.parquet (tick bars: 100 ticks per bar, OHLCV)
+    ▼ pipeline/build-bars.py
+bars.parquet (tick bars: 100 ticks per bar)
     │
-    ▼ engineer-features.py
-features.parquet (18 features per bar)
+    ▼ pipeline/engineer-features.py
+features.parquet (18 signal features)
     │
-    ▼ generate-labels.py
-labeled.parquet (features + direction labels + SL/TP labels)
+    ├──► pipeline/generate-labels.py → labeled.parquet (BUY/SELL)
+    └──► (future) generate-labels-regime.py → regime-labeled.parquet
 ```
 
-## Model Architecture (Current: 1 model)
+## 3-Model Architecture
 
 ```
-Input: 18 features × 10 lookback = [batch, 10, 18]
-  │
-  ▼ LSTM (hidden=128, layers=2)
-  │
-  ▼ Dropout (0.3)
-  │
-  ▼ Linear → 2 classes
-  │
-  ▼ Softmax → P(SELL), P(BUY)
+                    ┌─────────────────────────────────────┐
+                    │            EA OnTick()               │
+                    │                                      │
+   100 ticks ──────►│  Build tick bar + compute features   │
+                    │                                      │
+                    │  ┌───────────────────────────────┐   │
+                    │  │  Model 1: Regime Detector      │   │
+                    │  │  Input: 6 regime features      │   │
+                    │  │  Output: TRENDING/RANGING/DEAD │   │
+                    │  └───────────┬────────────────────┘   │
+                    │              │                         │
+                    │    ┌─────────┼──────────┐              │
+                    │    ▼         ▼          ▼              │
+                    │ TRENDING  RANGING     DEAD             │
+                    │    │         │          │              │
+                    │    ▼         ▼          ▼              │
+                    │ ┌───────┐ ┌───────┐  NO TRADE         │
+                    │ │Model  │ │Model  │                    │
+                    │ │2a:    │ │2b:    │                    │
+                    │ │Trend  │ │Range  │                    │
+                    │ │Signal │ │Signal │                    │
+                    │ └───┬───┘ └───┬───┘                    │
+                    │     │         │                         │
+                    │     ▼         ▼                         │
+                    │  BUY/SELL  BUY/SELL                     │
+                    │  SL=$3     SL=$2                        │
+                    │  TP=$15    TP=$4                        │
+                    │  Trail     No trail                     │
+                    │  $8/$1                                  │
+                    └─────────────────────────────────────┘
 ```
 
-## Model Architecture (Target: 3 models)
-
-```
-Bar → Model 1 (Regime)  → TRENDING → Model 2a (Trend) → BUY/SELL
-                         → RANGING  → Model 2b (Range) → BUY/SELL
-                         → DEAD     → NO TRADE
-```
-
-## EA Flow
+## EA Flow (Target 3-Model)
 
 ```
 OnTick()
   │
   ├─ Collect 100 ticks → build tick bar
   │
-  ├─ Compute 18 features (normalize with training stats)
+  ├─ Compute features (18 signal + 6 regime)
   │
-  ├─ Fill lookback buffer (10 bars)
+  ├─ Fill lookback buffer
   │
-  ├─ ONNX inference → direction + confidence
+  ├─ ONNX #1: Regime → TRENDING / RANGING / DEAD
+  │     │
+  │     ├─ DEAD → skip
+  │     ├─ TRENDING → ONNX #2a → BUY/SELL (SL=$3, TP=$15, trail $8/$1)
+  │     └─ RANGING → ONNX #2b → BUY/SELL (SL=$2, TP=$4, no trail)
   │
   ├─ Filters: spread, confidence, weekend, DD kill
   │
-  └─ Execute: OrderSend with SL/TP
+  └─ Execute: OrderSend with regime-specific SL/TP
 ```
 
 ## Execution Parameters
 
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| SL | 3000 pts ($3) | Fixed |
-| TP | 15000 pts ($15) | Fixed |
-| R:R | 1:5 | |
-| Max Spread | 3000 pts | Skip if higher |
-| Confidence | 0.55 | Skip if lower |
-| Max Hold | 50 bars | Timeout exit |
-| Trailing | $8 start, $1 step | PF 0.99→1.16 |
+### Trending Mode
+
+| Parameter | Value |
+|-----------|-------|
+| SL | 3000 pts ($3) |
+| TP | 15000 pts ($15) |
+| Trailing | $8 start, $1 step |
+
+### Ranging Mode
+
+| Parameter | Value |
+|-----------|-------|
+| SL | 2000 pts ($2) |
+| TP | 4000 pts ($4) |
+| Trailing | OFF |
+
+### Shared
+
+| Parameter | Value |
+|-----------|-------|
+| Confidence | ≥ 0.55 |
+| Max Spread | 300 pts |
+| Max Hold | 50 bars |
+| DD Kill | 15% |
