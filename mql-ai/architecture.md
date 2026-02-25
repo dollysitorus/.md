@@ -159,3 +159,16 @@ OnTick()
 | Max Spread | 300 pts |
 | Max Hold | 50 bars |
 | DD Kill | 15% |
+
+---
+
+## See Also
+
+| Topik | Baca di |
+|-------|---------|
+| Detail model specs & performance | [models.md](models.md) |
+| Features input per model | [features.md](features.md) |
+| EA parameters & integration | [ea.md](ea.md) |
+| Script per folder | [scripts.md](scripts.md) |
+| Data source & processed files | [data.md](data.md) |
+| Alasan architecture 3-model | [decisions.md](decisions.md) → D7 |

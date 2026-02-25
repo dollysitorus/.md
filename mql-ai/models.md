@@ -90,3 +90,19 @@ Bar → Model 1 (Regime)  → TRENDING → Model 2a (Trend Signal) → BUY/SELL
 | Filter v1 (train-filter.py) | Superseded by Regime Detector |
 | Sizing (train-sizing.py) | Phase 5 only |
 | Signal 3-class (train-signal.py) | Replaced by 2-class (better F1) |
+
+---
+
+## See Also
+
+| Topik | Baca di |
+|-------|---------|
+| Detail 18 signal features | [features.md](features.md) → Signal Model Features |
+| Detail 6 regime features | [features.md](features.md) → Planned Regime Features |
+| Kenapa model ini dipilih | [decisions.md](decisions.md) → D2, D7 |
+| Hasil stress test detail | [research-log.md](research-log.md) → 2026-02-23 |
+| Kenapa PF 2.76 vs 0.98 | [research-log.md](research-log.md) → Root Cause Discovery |
+| Framework validasi model baru | [stress-test-framework.md](stress-test-framework.md) |
+| Script training | [scripts.md](scripts.md) → Training |
+| Bagaimana EA pakai model | [ea.md](ea.md) → ONNX Integration |
+| Architecture flow lengkap | [architecture.md](architecture.md) → 3-Model Architecture |

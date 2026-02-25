@@ -53,6 +53,7 @@ MQL5 Expert Advisor dengan model AI ONNX untuk automated trading di MetaTrader 5
 | [data.md](data.md) | Raw data, processed data, tick bars, label distribution |
 | [ea.md](ea.md) | EA parameters, features, log format, ONNX integration |
 | [stress-test-framework.md](stress-test-framework.md) | 5 signal tests, 7 filter tests, labeling strategy, deployment gates |
+| [research-log.md](research-log.md) | Kronologis: apa yang dilakukan, hasil, rekomendasi |
 
 
 ## Status

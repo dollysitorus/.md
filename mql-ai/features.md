@@ -56,3 +56,15 @@ Disimpan di EA sebagai array `InpNormMeans` dan `InpNormStds`.
 | `range_width` | (high_20 - low_20) / σ | Range size |
 | `delta_consistency` | sign consistency over 10 bars | Order flow direction |
 | `tick_intensity_z` | z-score of tick_intensity | Activity level |
+
+---
+
+## See Also
+
+| Topik | Baca di |
+|-------|---------|
+| Model apa yang pakai features ini | [models.md](models.md) |
+| Script yang generate features | [scripts.md](scripts.md) → `pipeline/engineer-features.py` |
+| Bagaimana features dinormalisasi di EA | [ea.md](ea.md) → Normalization |
+| Raw data → features pipeline | [architecture.md](architecture.md) → Data Pipeline |
+| Data source & statistics | [data.md](data.md) |

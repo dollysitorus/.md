@@ -124,4 +124,40 @@ Semua keputusan arsitektur & riset, urut kronologis.
 - Analisis per session (Asia/London/NY/Dead): SL/TP optimal hampir identik
 - Session bukan differentiator kuat untuk SL/TP
 
-**Evidence:** `analyze-sessions.py`
+**Evidence:** `analyze-sessions.py` (removed, finding documented)
+
+---
+
+### D11: ⚠️ Mistake — Norm File Deleted During Cleanup
+
+**Tanggal:** 2026-02-25
+
+**Apa yang terjadi:**
+- Saat cleanup deprecated files, `signal-norm.npz` ikut terhapus
+- File ini berisi mean/std per feature (normalization stats dari training set)
+- Dibutuhkan oleh `export-onnx.py` untuk re-export ONNX
+- File tidak pernah di-commit ke git (binary, gitignored) → tidak bisa recover dari git
+
+**Dampak:**
+- Model weights (`signal-2class.pt`) **AMAN — tidak berubah**
+- ONNX yang sudah di-export (`signal.onnx`) **AMAN — tidak berubah**
+- Tapi kalau perlu re-export ONNX, harus regenerate norm stats dulu
+
+**Recovery:**
+- Run training script lagi dengan data + config yang sama → menghasilkan `signal-norm.npz` baru
+- Atau extract mean/std dari EA input params `InpNormMeans` / `InpNormStds` jika sudah diset
+
+**Lesson learned:**
+> ⚠️ **JANGAN hapus file yang berhubungan dengan model production tanpa verifikasi bahwa file bisa direconstruct.** Selalu cek dependency chain: `.pt` → `.npz` → `.onnx` → EA. Hapus file deprecated HANYA jika yakin tidak ada file production yang bergantung padanya.
+
+---
+
+## See Also
+
+| Topik | Baca di |
+|-------|---------|
+| Timeline lengkap semua riset | [research-log.md](research-log.md) |
+| Model specs & performance | [models.md](models.md) |
+| Framework stress test | [stress-test-framework.md](stress-test-framework.md) |
+| EA parameters aktual | [ea.md](ea.md) |
+| Features yang diuji | [features.md](features.md) |

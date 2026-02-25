@@ -115,3 +115,16 @@ Columns: DateTime, BarNum, Signal, Confidence,
 - Input: `[1, LOOKBACK, 18]` float tensor
 - Output: `[1, 2]` float tensor → P(SELL), P(BUY)
 - Tick bar building: 100 ticks → 1 bar → compute features → normalize → ONNX inference
+
+---
+
+## See Also
+
+| Topik | Baca di |
+|-------|---------|
+| Model yang dipakai EA | [models.md](models.md) |
+| Features yang dihitung EA | [features.md](features.md) |
+| SL/TP decision & trailing stop | [decisions.md](decisions.md) → D1, D3, D4 |
+| Architecture flow EA | [architecture.md](architecture.md) → EA Flow |
+| Log file untuk Phase 3 | [research-log.md](research-log.md) → EA Log Fix |
+| Risk guardrails framework | [context.md](context.md) → Production Framework |
