@@ -1,108 +1,113 @@
 # Models
 
-## 3-Model Architecture
+## VDB Signal Architecture (CURRENT — v7.x)
 
 ```
-Bar → Model 1 (Regime)  → TRENDING → Model 2a (Trend Signal) → BUY/SELL
-                         → RANGING  → Model 2b (Range Signal) → BUY/SELL
-                         → DEAD     → NO TRADE
+Ticks → VDB Bar (θ_I/θ_E) → 15 Features → LSTM → P(BUY), P(SELL)
 ```
+
+> Replaces 2-model architecture (regime+signal). VDB bars naturally filter noise.
 
 ---
 
-## Model 2a: Trend Signal — `signal-2class.pt` ✅ DONE
+## VDB Day-Trade Signal — `vdb_daytrade_6_10.onnx` ✅ PRODUCTION
 
 | Property | Value |
 |----------|-------|
-| File | `python/models/signal-2class.pt` |
-| ONNX | `python/models/signal-2class.onnx` |
+| File (ONNX) | `mql5/Files/vdb_daytrade_6_10.onnx` |
+| File (PyTorch) | `vdb-day-signal-best.pt` |
+| Norm | `vdb-day-signal-norm.npz` (z-score) |
 | Type | LSTM 2-class classifier |
-| Input | `[batch, 10, 18]` (lookback=10, features=18) |
-| Output | `[batch, 2]` → P(SELL), P(BUY) |
+| Input | `[1, 30, 15]` (SEQ_LEN=30, FEAT=15) |
+| Output | `[1, 2]` → softmax(logit_SELL, logit_BUY) |
 | Hidden | 128 |
 | Layers | 2 |
 | Dropout | 0.3 (training), 0 (inference) |
-| Training script | `train-signal-2class.py` |
+| VDB θ | θ_I=6, θ_E=10 |
+| Median bar duration | ~3.2 seconds |
+| Training script | `vdb-study.py` (pipeline) |
+| EA | `vdb-day-ea/vdb-day-ea.mq5` (magic=260226) |
 
 ### Performance
 
-| Condition | WR | PF | DD | PnL |
-|-----------|------|------|------|------|
-| Filtered bars (label!=0), spread $0.25 | ~57% | **2.76+** | low | +$xxx |
-| All bars, spread $0.25, slip $0.05-0.10 | 18% | 0.98 | $1,830 | -$335 |
-| All bars + trailing $8/$1 | 28% | **1.16** | $1,832 | +$3,809 |
-| All bars + trailing $5/$1 | 37.7% | **1.22** | $2,317 | +$5,444 |
+| Metric | Value |
+|--------|-------|
+| Val accuracy | ~70.0% |
+| @ conf≥0.80: WR | 82.7% |
+| @ conf≥0.80: PF | 11.93 |
+| @ conf≥0.80: trades | ~75K |
 
-### Critical Finding
+### VDB Signal Features (15)
 
-> ⚠️ PF 2.76+ vs 0.98 gap karena **stress test hanya pada filtered bars** (`label_direction != 0`, 41% data). Live EA berjalan di ALL bars → model dipaksa prediksi noise → PF turun.
->
-> **Solusi:** Model 1 (Regime) sebagai filter → hanya kirim tradeable bars ke signal model.
+| # | Feature | Deskripsi |
+|---|---------|-----------|
+| 0 | `imb_ratio` | I / E (arah bar) |
+| 1 | `persistence_score` | mean(\|IR\|, last 10 bars) |
+| 2 | `flip_rate` | sign changes IR last 10 |
+| 3 | `E_slope` | E trend (recent vs prev) |
+| 4 | `duration_ratio` | log(dur / median_dur) |
+| 5 | `E` | total energy bar |
+| 6 | `ofi` | (buy-sell) / total ticks |
+| 7 | `buy_r` | buy / total ticks |
+| 8 | `delta` | buy - sell count |
+| 9 | `imb_momentum` | I_now - I_prev bar |
+| 10 | `sigma` | volatility (std of mid changes) |
+| 11 | `twap_dev` | close - TWAP |
+| 12 | `bar_speed` | ticks_eff / duration_sec |
+| 13 | `spread_ratio` | spread / median_spread |
+| 14 | `range_ratio` | (high-low) / spread |
 
 ---
 
-## Model 1: Regime Detector — PLANNED
+## VDB Scalp Signal — `vdb-signal.onnx` ✅ PRODUCTION
 
 | Property | Value |
 |----------|-------|
-| File | `python/models/regime.pt` (planned) |
-| Type | LSTM or XGBoost 3-class |
-| Output | TRENDING (0) / RANGING (1) / DEAD (2) |
-| Target | F1-macro > 0.70 |
+| File (ONNX) | `mql5/Files/vdb-signal.onnx` |
+| Type | LSTM 2-class classifier |
+| Input | `[1, 30, 15]` (same architecture) |
+| Output | `[1, 2]` → softmax(logit_SELL, logit_BUY) |
+| VDB θ | θ_I=3, θ_E=5 |
+| Median bar duration | ~1.3 seconds |
+| EA | `vdb-scalp-ea/vdb-scalp-ea.mq5` (magic=260227) |
 
-### Regime Definitions
+### Performance
 
-| Regime | Label | Definisi |
-|--------|-------|----------|
-| TRENDING | 0 | `abs(close - close.shift(20)) > 2 × σ₂₀` |
-| RANGING | 1 | `abs(close - close.shift(20)) < 0.5 × σ₂₀` |
-| DEAD | 2 | `tick_intensity < median × 0.3` OR `spread > mean × 3` |
-
-### Regime Features (6 baru, terpisah dari signal features)
-
-| Feature | Formula |
-|---------|---------|
-| `sigma_z` | (σ - MA(σ,50)) / std(σ,50) |
-| `atr_ratio` | log(ATR_5 / ATR_20) |
-| `trend_strength` | abs(close - SMA_20) / σ |
-| `range_width` | (high_20 - low_20) / σ |
-| `delta_consistency` | sign consistency delta over 10 bars |
-| `tick_intensity_z` | z-score of tick_intensity |
+| Metric | Value |
+|--------|-------|
+| Val accuracy | ~76.8% |
 
 ---
 
-## Model 2b: Range Signal — PLANNED
+## VDB Swing Signal — ❌ NOT VIABLE
 
 | Property | Value |
 |----------|-------|
-| File | `python/models/range-signal.pt` (planned) |
-| Type | LSTM 2-class |
-| Strategy | Mean reversion |
-| SL/TP | $2/$4 (R:R 1:2, tighter than trend) |
+| VDB θ | θ_I=15, θ_E=25 |
+| Val accuracy | ~57.4% |
+| Status | Dropped — too close to random |
 
 ---
 
-## Abandoned Models
+## Legacy Models (DEPRECATED)
 
-| Model | Why Abandoned |
-|-------|---------------|
-| Adaptive SL/TP (sltp.pt) | SL MAE=23 pips too high, overfitting, fragile |
-| Filter v1 (train-filter.py) | Superseded by Regime Detector |
-| Sizing (train-sizing.py) | Phase 5 only |
-| Signal 3-class (train-signal.py) | Replaced by 2-class (better F1) |
+All replaced by VDB architecture v7.x.
+
+| Model | Status |
+|-------|--------|
+| Regime Detector (`regime.onnx`) | Deprecated — VDB bars replace regime gate |
+| Trend Signal (`signal.onnx`, 18 features, 1000-tick bars) | Deprecated — replaced by VDB signal |
+| Range Signal (Model 2b) | Abandoned — 3 approaches all failed |
+| Adaptive SL/TP (`sltp.pt`) | Abandoned — overfitting |
+| Filter v1, Signal 3-class | Superseded |
 
 ---
 
 ## See Also
 
 | Topik | Baca di |
-|-------|---------|
-| Detail 18 signal features | [features.md](features.md) → Signal Model Features |
-| Detail 6 regime features | [features.md](features.md) → Planned Regime Features |
-| Kenapa model ini dipilih | [decisions.md](decisions.md) → D2, D7 |
-| Hasil stress test detail | [research-log.md](research-log.md) → 2026-02-23 |
-| Kenapa PF 2.76 vs 0.98 | [research-log.md](research-log.md) → Root Cause Discovery |
-| Framework validasi model baru | [stress-test-framework.md](stress-test-framework.md) |
-| Script training | [scripts.md](scripts.md) → Training |
-| Bagaimana EA pakai model | [ea.md](ea.md) → ONNX Integration |
-| Architecture flow lengkap | [architecture.md](architecture.md) → 3-Model Architecture |
+|-------|---------| 
+| EA parameters & dynamic exit | [ea.md](ea.md) |
+| Architecture flow | [architecture.md](architecture.md) |
+| Decisions history | [decisions.md](decisions.md) |
+| Research experiments | [research-log.md](research-log.md) |

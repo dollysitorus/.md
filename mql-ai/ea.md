@@ -1,120 +1,143 @@
 # Expert Advisor (EA)
 
-## File
-`mql5/experts/signal-trader-ea.mq5` — v4.00
+## Active EAs
 
-## Input Parameters
+### VDB Day-Trade EA v7.10 — `vdb-day-ea/vdb-day-ea.mq5` (PRODUCTION)
 
-### Core Trading
+**Model:** `vdb_daytrade_6_10.onnx` | **Magic:** 260226
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `InpStopLoss` | 3000 pts ($3) | Stop loss |
-| `InpTakeProfit` | 15000 pts ($15) | Take profit |
-| `InpMaxSpread` | 300 pts ($0.30) | Max spread untuk buka posisi |
-| `InpEmergencySpread` | 1000 pts ($1) | Emergency close all |
-| `InpMinConfidence` | 0.55 | Min prediction confidence |
-| `InpMagic` | 20260223 | Magic number |
-
-### Lot Sizing
+#### Core Parameters
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `InpAutoLot` | false | Auto lot sizing |
-| `InpFixedLot` | 0.01 | Fixed lot (jika auto=off) |
-| `InpRiskPercent` | 1.0% | Risk per trade (jika auto=on) |
+| `InpConfThreshold` | 0.80 | Min confidence to enter |
+| `InpInitialSL` | $4.0 | Initial stop loss (price) |
+| `InpMaxTP` | $25.0 | Hard TP cap (safety) |
+| `InpLotSize` | 0.01 | Fixed lot size |
+| `InpMagic` | 260226 | Magic number |
+| `InpMaxPositions` | 3 | Max simultaneous positions |
+| `InpMinBarsBetween` | 10 | Min bars between entries (~30s) |
+| `InpMaxSpreadPts` | 300 | Max spread (3-digit points) |
+| `InpCooldownBars` | 5 | Bars to skip after loss |
+| `InpSlippage` | 30 | Max slippage (points) |
 
-### Trailing Stop
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `InpTrailingStop` | true | Enable trailing |
-| `InpTrailStart` | 3000 pts ($3) | Start trailing setelah profit X |
-| `InpTrailStep` | 500 pts ($0.50) | Trail step |
-
-> ⚠️ Default trailing di EA: start=3000, step=500. Simulasi optimal: start=8000, step=1000. **Perlu di-update!**
-
-### Weekend Filter
+#### Dynamic Exit Parameters
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `InpWeekendFilter` | true | Tutup posisi sebelum weekend |
-| `InpFridayStopGMT` | 20 | Stop new trades (GMT) |
-| `InpFridayCloseGMT` | 21 | Force close all (GMT) |
+| `InpFlipConfMin` | 0.75 | Signal flip exit min confidence |
+| `InpBreakevenAt` | $2.0 | Move SL to breakeven at this profit |
+| `InpMaxBarsHold` | 200 | Max bars to hold (~10 min) |
 
-### Drawdown Protection
+#### Asymmetric Trailing Logic
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `InpDrawdownKill` | true | Kill switch jika DD terlalu besar |
-| `InpMaxDrawdownPct` | 15.0% | Max DD dari peak equity |
+| Profit Level | Lock % | SL Position | Max Giveback |
+|-------------|--------|-------------|-------------|
+| $0 - $2 | 0% | Initial ($-4) | $4 |
+| $2 - $4 | 0% | Breakeven | $2-$4 |
+| $4 - $8 | 50% | entry + 50% | $2-$4 |
+| $8 - $12 | 65% | entry + 65% | $2.8-$4.2 |
+| $12+ | 80% | entry + 80% | $2.4-$4 |
 
-### Time Filter
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `InpTimeFilter` | true | Filter jam trading |
-| `InpTimeStart` | 8 | Trading start (server time) |
-| `InpTimeEnd` | 20 | Trading end (server time) |
-
-### Daily Limit
+#### Auto Lot
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `InpDailyLimit` | false | Enable daily loss limit |
-| `InpMaxDailyLoss` | $50 | Max daily loss |
+| `InpAutoLot` | false | Enable auto lot |
+| `InpRiskPct` | 1.0% | Risk % per trade |
 
-### Display & Logging
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `InpShowHUD` | true | On-chart heads up display |
-| `InpLogToFile` | true | Log signals & trades to CSV |
-
-### Telegram
+#### Logging
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `InpTelegram` | false | Telegram alerts |
-| `InpTgBotToken` | "" | Bot token (from @BotFather) |
-| `InpTgChatId` | "" | Chat ID (from @userinfobot) |
-
-### Normalization
-
-| Parameter | Description |
-|-----------|-------------|
-| `InpNormMeans` | 18 comma-separated means dari training set |
-| `InpNormStds` | 18 comma-separated stds dari training set |
+| `InpLogToFile` | true | CSV log signals & trades |
 
 ---
 
-## Features
+### VDB Scalp EA v7.00 — `vdb-scalp-ea/vdb-scalp-ea.mq5`
 
-- **HUD**: On-chart display showing signal, confidence, P&L, DD
-- **Telegram**: Notifikasi saat posisi dibuka/ditutup
-- **Drawdown Kill**: Otomatis pause jika DD > threshold
-- **Weekend Filter**: Close all sebelum weekend
-- **Emergency Spread**: Close all jika spread spike
-- **Time Filter**: Skip non-trading hours
+**Model:** `vdb-signal.onnx` | **Magic:** 260227
 
-## Log File
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `InpConfThreshold` | 0.80 | Min confidence |
+| `InpTP_Price` | $5.0 | Fixed take profit |
+| `InpSL_Price` | $2.0 | Fixed stop loss |
+| `InpMaxSpreadPts` | 300 | Max spread |
+| `InpCooldownBars` | 5 | Loss cooldown |
+
+---
+
+## VDB Bar Mechanic
 
 ```
-Location: MQL5/Common/Files/AI_Signal_Log_XAUUSD_YYYYMMDD.csv
-Mode: Append (tidak overwrite)
-Format: CSV
+Each tick:
+  mid = (bid + ask) / 2
+  E += |mid - prev|        ← Energy (activity)
+  I += (mid - prev)        ← Imbalance (direction)
 
-Columns: DateTime, BarNum, Signal, Confidence,
-         P(SELL), P(BUY), Action, Spread, Price,
-         SL, TP, Result
+Bar closes when: |I| >= θ_I AND E >= θ_E
 ```
+
+| EA | θ_I | θ_E | ~Duration |
+|----|-----|-----|-----------|
+| Day-Trade | 6 | 10 | 3.2s |
+| Scalp | 3 | 5 | 1.3s |
 
 ## ONNX Integration
 
-- Model di-embed langsung di EA (resource `#resource`)
-- Input: `[1, LOOKBACK, 18]` float tensor
-- Output: `[1, 2]` float tensor → P(SELL), P(BUY)
-- Tick bar building: 100 ticks → 1 bar → compute features → normalize → ONNX inference
+- Model embedded via `#resource "\\Files\\vdb_daytrade_6_10.onnx"`
+- Input: `[1, 30, 15]` (30 bars × 15 features)
+- Output: `[1, 2]` → softmax → P(SELL), P(BUY)
+- Normalization: Z-score with training mean/std (hardcoded in EA)
+- Inference triggered: on VDB bar close (event-driven, not every tick)
+- Warmup: 30 bars needed before first prediction
+
+## HUD Display
+
+```
+VDB DayTrade v7.10 [READY]
+Bars: 35/30 | Total: 127
+Spread: 254 (max 300)
+E=3.2 I=2.1 |I|/th=35% Teff=8
+Last: IR=0.687 E=12.3 Dur=3.1s
+3 pos | unrealized: $4.50
+WR: 72% (8W/3L) | Net: $15.60
+```
+
+### HUD Elements
+| Line | Content |
+|------|---------|
+| Title | Version + status (PREFILL/WARMUP/READY) |
+| Bars | Current buffer / required + total built |
+| Spread | Current vs max allowed (color: green/red) |
+| VDB Accumulation | E, I, % to threshold, effective ticks |
+| Last Bar | Imbalance ratio, energy, duration |
+| Position | Count + aggregate unrealized PnL |
+| Stats | Win rate + net PnL (today, with commission) |
+
+## Statistics Tracking
+
+- **Scope**: Today (from 00:00 server time)
+- **Persistent**: Restored from deal history on EA init (survives restart)
+- **Filter**: Magic number + symbol (pure EA trades only)
+- **PnL**: Net = `DEAL_PROFIT + DEAL_COMMISSION + DEAL_SWAP`
+
+## Log Format (CSV)
+
+```
+Time, Duration, E, I, IR, P_BUY, P_SELL, Conf, Signal, Spread
+```
+
+---
+
+## Deprecated EAs
+
+| EA | File | Status |
+|----|------|--------|
+| Router EA v6.00 | `router-ea/router-ea.mq5` | Deprecated — replaced by VDB v7.x |
+| Signal Trader v5.00 | `signal-trader-ea.mq5` | Deprecated |
+| ONNX EA | `onnx-ea.mq5` | Can be deleted |
 
 ---
 
@@ -122,9 +145,6 @@ Columns: DateTime, BarNum, Signal, Confidence,
 
 | Topik | Baca di |
 |-------|---------|
-| Model yang dipakai EA | [models.md](models.md) |
-| Features yang dihitung EA | [features.md](features.md) |
-| SL/TP decision & trailing stop | [decisions.md](decisions.md) → D1, D3, D4 |
-| Architecture flow EA | [architecture.md](architecture.md) → EA Flow |
-| Log file untuk Phase 3 | [research-log.md](research-log.md) → EA Log Fix |
-| Risk guardrails framework | [context.md](context.md) → Production Framework |
+| Model specs | [models.md](models.md) |
+| Architecture flow | [architecture.md](architecture.md) |
+| Research experiments | [research-log.md](research-log.md) |

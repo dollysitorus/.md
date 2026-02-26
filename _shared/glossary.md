@@ -62,3 +62,12 @@ Satu istilah = satu nama. Sinonim dilarang.
 | indicator | Technical indicator / custom indicator MT5 | signal, metric |
 | backtest | Pengujian strategi pada data historis | simulation, test run |
 
+## VDB Dashboard
+
+| Istilah | Definisi | ❌ Jangan pakai |
+|---------|----------|-----------------| 
+| license key | Key unik per EA instance (`VDB-XXXX-XXXX-XXXX`) | password, token, api key |
+| ingest | Proses EA mengirim data ke dashboard API | upload, sync, push |
+| bar | VDB bar — event-driven bar dari tick data | candle, candlestick |
+
+

@@ -152,6 +152,63 @@ Semua keputusan arsitektur & riset, urut kronologis.
 
 ---
 
+### D12: Regime Model = Simple Gate (Not Profit Predictor)
+
+**Keputusan:** Regime model hanya sebagai gate sederhana (TREND/NON-TREND), bukan edge predictor.
+
+**Alasan:**
+- v2 (profitability labels + regime features): F1=0.47 → gagal total
+- v3 (15 edge features + Method A labels): F1=0.50, PF improvement marginal (1.03→1.11)
+- v1 (ER-based TREND/NON-TREND): F1=0.85, PF 1.09→1.44, DD turun 5x
+
+**Insight:** Regime model cuma perlu filter "apakah market layak trade" — bukan prediksi profitability. Task profitability diserahkan ke signal model + sizing model.
+
+**Evidence:** `train-regime.py` (v1 ✅), `train-regime-v2.py` (❌), `train-regime-v3.py` (❌)
+
+---
+
+### D13: EA v5.00 — Router Architecture + Hysteresis
+
+**Keputusan:** EA pakai router pattern: regime.onnx → hysteresis → signal.onnx (TREND only)
+
+**Hysteresis:** Rolling mean of 3 P(TREND), asymmetric thresholds enter=0.60 exit=0.40
+
+**Alasan:**
+- Bar-by-bar regime switching causes flip-flop → kacau
+- Rolling mean 3 bar = structural confirmation (bukan noise)
+- Asymmetric: masuk TREND cepat (2 bar), keluar lebih hati-hati (3 bar)
+
+**Evidence:** T5 system test PF=1.44, DD -$162
+
+---
+
+### D14: Range Model (Model 2b) — DROPPED
+
+**Tanggal:** 2026-02-25
+**Keputusan:** Range model abandoned. EA proceeds as 2-model only (regime + trend signal).
+**Alasan:** 3 approaches tried (LSTM×2 + XGBoost). XGBoost best but failed 2/4 stress tests (spread sweep PF→1.01, walk-forward unstable). Edge too small for real costs.
+**Evidence:** `test-range-threshold.py`, stress test results in research-log.md
+
+---
+
+### D15: Feature Parity — 7 Formula Fixes
+
+**Tanggal:** 2026-02-25
+**Keputusan:** Fix all 7 formula mismatches between Python training and EA inference.
+**Alasan:** OFI, cumDelta, twap_deviation, tick_intensity, spread_compression, rolling_sigma, spread_mean all had different formulas. Model predictions meaningless with wrong features.
+**Evidence:** `Feature_Parity_Audit_Checklist.txt`
+
+---
+
+### D16: EA v6.00 — Router EA (replaces v5.00/v5.10)
+
+**Tanggal:** 2026-02-25
+**Keputusan:** New EA `router-ea.mq5` v6.00 with regime exit handling, loss cooldown, windowed cumDelta, confidence 0.60, configurable BE offset, log level filtering.
+**Alasan:** V5.10 analysis identified 8 correctness/risk issues. All fixed in v6.00.
+**Evidence:** `EA_v6_00_Analysis_Checklist.txt`
+
+---
+
 ## See Also
 
 | Topik | Baca di |
